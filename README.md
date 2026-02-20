@@ -3,7 +3,6 @@
 A **modular, extensible canvas drawing library** built on [Konva.js](https://konvajs.org/).  
 Plugin-ready architecture — add custom shapes, animations, and tools without touching core files.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-6c63ff.svg)](LICENSE)
 [![Konva](https://img.shields.io/badge/Konva-v9-blue)](https://konvajs.org/)
 
 ---
