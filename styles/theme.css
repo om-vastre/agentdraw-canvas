@@ -1,0 +1,75 @@
+/*
+  theme.css — CSS custom properties for dark & light modes.
+  Toggled by setting data-theme="dark" | "light" on <html>.
+  All component colours reference these tokens only.
+*/
+
+/* ── Dark mode (default) ─────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg:           #0e0e12;
+  --surface:      #17171d;
+  --surface-2:    #1f1f28;
+  --surface-3:    #27273400;
+  --border:       #2c2c3a;
+  --border-hover: #44445c;
+  --accent:       #6c63ff;
+  --accent-2:     #9d78ff;
+  --accent-glow:  rgba(108, 99, 255, 0.22);
+  --green:        #22c55e;
+  --red:          #ef4444;
+  --amber:        #f59e0b;
+  --text:         #e4e4f0;
+  --text-2:       #8e8ea8;
+  --text-3:       #58586a;
+  --canvas-bg:    #0e0e12;
+  --grid-color:   rgba(255,255,255,0.03);
+  --shadow:       0 4px 24px rgba(0, 0, 0, 0.6);
+  --shadow-accent:0 0 20px rgba(108, 99, 255, 0.35);
+  --scrollbar:    #2c2c3a;
+  --tooltip-bg:   #27273d;
+  --kbd-bg:       #1f1f28;
+}
+
+/* ── Light mode ──────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:           #f5f5fa;
+  --surface:      #ffffff;
+  --surface-2:    #f0f0f8;
+  --surface-3:    #e8e8f4;
+  --border:       #dddde8;
+  --border-hover: #bbbbcc;
+  --accent:       #5b52e8;
+  --accent-2:     #8875ff;
+  --accent-glow:  rgba(91, 82, 232, 0.18);
+  --green:        #16a34a;
+  --red:          #dc2626;
+  --amber:        #d97706;
+  --text:         #1a1a2e;
+  --text-2:       #55556a;
+  --text-3:       #9898b0;
+  --canvas-bg:    #fafafa;
+  --grid-color:   rgba(0,0,0,0.045);
+  --shadow:       0 4px 24px rgba(0, 0, 0, 0.12);
+  --shadow-accent:0 0 20px rgba(91, 82, 232, 0.25);
+  --scrollbar:    #dddde8;
+  --tooltip-bg:   #ffffff;
+  --kbd-bg:       #ebebf4;
+}
+
+/* ── Smooth theme transition ─────────────────────────── */
+*, *::before, *::after {
+  transition:
+    background-color 0.22s ease,
+    border-color     0.22s ease,
+    color            0.22s ease,
+    box-shadow       0.22s ease;
+}
+
+/* Exclude transitions that would interfere with animations */
+canvas,
+.cs-tool-btn,
+.cs-swatch,
+[class*="Konva"] {
+  transition: none;
+}
