@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentDraw canvas — Custom Plugin Example</title>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  <link rel="stylesheet" href="../styles/theme.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components.css">
+  <!-- https://github.com/mehulcode12/agentdraw-canvas.git -->
+   <!-- Made with ❤️ by Mehul Ligade -->
+</head>
+<body>
+<!-- Same HTML structure as index.html — just copy it here -->
+<!-- (abbreviated for brevity; use index.html as base) -->
+<p style="font:16px 'DM Sans',sans-serif;color:var(--text);padding:40px;background:var(--bg);min-height:100vh">
+  Copy <code>index.html</code> body here, then paste the plugin script below.
+</p>
+<script type="module">
+import { CanvasStudio } from '../src/CanvasStudio.js';
+const studio = new CanvasStudio();
+window.studio = studio;
+
+/* ── EXAMPLE 1: Custom Shape ──────────────────────────── */
+studio.Shapes.register('cloud', cfg => {
+  const group = new Konva.Group({ x: cfg.x, y: cfg.y, draggable: true, opacity: cfg.opacity ?? 1 });
+  [
+    { x: 0,  y: 0,  r: 28 }, { x: 38, y:-9,  r: 34 },
+    { x: 72, y: 0,  r: 28 }, { x: 18, y: 14, r: 23 }, { x: 50, y: 18, r: 26 },
+  ].forEach(b =>
+    group.add(new Konva.Circle({ x: b.x, y: b.y, radius: b.r, fill: cfg.fill, stroke: cfg.stroke, strokeWidth: 0 }))
+  );
+  return group;
+});
+
+/* ── EXAMPLE 2: Custom Animation ──────────────────────── */
+studio.Animations.register(
+  'disco',
+  (shape, state, layer) => new Konva.Animation(f => {
+    shape.rotation(state.origRot + f.time / 500 * 360);
+    if (shape.fill) shape.fill(`hsl(${f.time / 5 % 360}, 85%, 65%)`);
+  }, layer),
+  { icon: '🪩', label: 'Disco' }
+);
+
+/* ── EXAMPLE 3: Custom Tool ───────────────────────────── */
+studio.Tools.register('stamp', {
+  label: 'Stamp', icon: '🔖', shortcut: 'Q', cursor: 'crosshair',
+  onActivate(svc) { svc.ui.toast('Click anywhere to stamp a star!'); },
+  onMousedown(e, svc) {
+    if (e.target !== svc.core.stage) return;
+    const { x, y } = svc.core.pointer();
+    const savedColor = svc.color.current();
+    svc.color.set('#ffd166', null);
+    svc.shapes.create('star', { x, y, radius: 44 });
+    svc.color.set(savedColor, null);
+  },
+});
+
+studio.UI.toast('Plugin loaded ✓  New: cloud shape · disco animation · stamp tool');
+
+// Demonstrate
+setTimeout(() => {
+  studio.Shapes.quickAdd('cloud');   // add a cloud shape
+}, 500);
+</script>
+</body>
+</html>
