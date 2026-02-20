@@ -25,7 +25,7 @@ Plugin-ready architecture — add custom shapes, animations, and tools without t
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/your-org/agentdraw-canvasvas.git
+git clone https://github.com/mehulcode12/agentdraw-canvas.git
 cd agentdraw-canvas
 npx serve .          # opens on http://localhost:3000
 ```
