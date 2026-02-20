@@ -1,0 +1,35 @@
+{
+  "name": "agentdraw-canvas",
+  "version": "1.0.0",
+  "description": "A modular, extensible canvas drawing library built on Konva.js with 20 animations, pan/zoom, dark/light themes, and a plugin-ready architecture.",
+  "main": "src/CanvasStudio.js",
+  "type": "module",
+  "scripts": {
+    "dev":   "npx serve . --port 3000 --open",
+    "build": "npx esbuild src/CanvasStudio.js --bundle --outfile=dist/agentdraw-canvas.bundle.js --format=esm",
+    "lint":  "npx eslint src/**/*.js"
+  },
+  "keywords": [
+    "canvas", "konva", "drawing", "animation",
+    "diagram", "whiteboard", "shapes", "modular", 
+    "extensible", "plugin", "architecture", "pan", "zoom",
+    "dark theme", "light theme", "open source", "AI",
+    "agent", "agentdraw", "canvas library",
+    "Agentic Canvas", "Agentic Diagramming", "Agentic Whiteboard",
+    "AI Canvas", "AI Diagramming", "AI Whiteboard"
+  ],
+  "author": "Mehul Ligade <mehulligade2003@gmail.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mehulcode12/agentdraw-canvas.git"
+  },
+  "peerDependencies": {
+    "konva": "^9.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "eslint": "^8.0.0",
+    "serve": "^14.0.0"
+  }
+}

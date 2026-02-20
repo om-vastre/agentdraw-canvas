@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentDraw canvas</title>
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  <link rel="stylesheet" href="styles/theme.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <!-- Made with ❤️ by Mehul Ligade -->
+  <!-- https://github.com/mehulcode12/agentdraw-canvas.git -->
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Header ── -->
+  <header class="cs-header">
+    <div class="cs-logo">
+      <div class="cs-logo-mark">🎨</div>
+      AgentDraw canvas
+    </div>
+    <div class="cs-divider"></div>
+    <div class="cs-header-group">
+      <button class="cs-hbtn" id="btn-undo">↶ Undo</button>
+      <button class="cs-hbtn" id="btn-redo">↷ Redo</button>
+    </div>
+    <div class="cs-divider"></div>
+    <div class="cs-header-group">
+      <button class="cs-hbtn" id="btn-fit">⊡ Fit</button>
+      <button class="cs-hbtn" id="btn-reset-zoom">⊙ 100%</button>
+    </div>
+    <div class="cs-divider"></div>
+    <div class="cs-header-group">
+      <button class="cs-hbtn" id="btn-export">↓ Export PNG</button>
+      <button class="cs-hbtn" id="btn-export-svg">↓ Export SVG</button>
+    </div>
+    <button id="theme-toggle" title="Toggle dark / light mode">☀️</button>
+    <div class="cs-tool-indicator">
+      <div class="cs-tool-dot" id="tool-dot"></div>
+      <span id="tool-label">Select</span>
+    </div>
+  </header>
+
+  <!-- ── Workspace ── -->
+  <div class="workspace">
+
+    <!-- Canvas area -->
+    <main id="canvas-area">
+      <div id="konva-container"></div>
+
+      <!-- Panel toggle -->
+      <button id="panel-toggle" title="Toggle panel">☰</button>
+
+      <!-- Bottom floating toolbar — populated by ToolRegistry.initToolbar() -->
+      <nav id="toolbar"></nav>
+
+      <!-- Zoom controls -->
+      <div class="cs-zoom">
+        <button class="cs-zbtn" id="btn-zoom-out">−</button>
+        <div class="cs-zdiv"></div>
+        <div class="cs-zlabel" id="zoom-label" title="Click to reset zoom">100%</div>
+        <div class="cs-zdiv"></div>
+        <button class="cs-zbtn" id="btn-zoom-in">+</button>
+        <div class="cs-zdiv"></div>
+        <button class="cs-zbtn" id="btn-fit-2" style="font-size:11px">⊡</button>
+      </div>
+
+      <!-- Inline text / sticky editor -->
+      <textarea id="text-editor" rows="1"></textarea>
+    </main>
+
+    <!-- ── Right Panel ── -->
+    <aside id="panel">
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Colors</div>
+        <div class="cs-color-grid" id="color-grid"></div>
+        <div class="cs-color-row">
+          <label>Custom</label>
+          <input type="color" id="custom-color" value="#6c63ff">
+        </div>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Sticky Note Color</div>
+        <div class="cs-sticky-row" id="sticky-color-row"></div>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Quick Add</div>
+        <div class="cs-shape-grid" id="shape-grid"></div>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Properties</div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Opacity</span><span class="cs-prop-val" id="v-opacity">100%</span></div>
+          <input type="range" class="cs-slider" min="0" max="100" value="100" data-prop="opacity" id="sl-opacity">
+        </div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Rotation</span><span class="cs-prop-val" id="v-rotation">0°</span></div>
+          <input type="range" class="cs-slider" min="-180" max="180" value="0" data-prop="rotation" id="sl-rotation">
+        </div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Shadow</span><span class="cs-prop-val" id="v-shadow">8</span></div>
+          <input type="range" class="cs-slider" min="0" max="40" value="8" data-prop="shadow" id="sl-shadow">
+        </div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Stroke Width</span><span class="cs-prop-val" id="v-strokeWidth">2</span></div>
+          <input type="range" class="cs-slider" min="0" max="20" value="2" data-prop="strokeWidth" id="sl-strokeWidth">
+        </div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Pencil Size</span><span class="cs-prop-val" id="v-pencilSize">4px</span></div>
+          <input type="range" class="cs-slider" min="1" max="40" value="4" data-prop="pencilSize" id="sl-pencilSize">
+        </div>
+        <div class="cs-prop">
+          <div class="cs-prop-row"><span class="cs-prop-label">Font Size</span><span class="cs-prop-val" id="v-fontSize">24px</span></div>
+          <input type="range" class="cs-slider" min="8" max="120" value="24" data-prop="fontSize" id="sl-fontSize">
+        </div>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Actions</div>
+        <button class="cs-action-btn" id="btn-duplicate">⧉ Duplicate</button>
+        <button class="cs-action-btn" id="btn-center">⊞ Center</button>
+        <button class="cs-action-btn" id="btn-fliph">↔ Flip H</button>
+        <button class="cs-action-btn" id="btn-front">⬆ Bring Front</button>
+        <button class="cs-action-btn" id="btn-back">⬇ Send Back</button>
+        <button class="cs-action-btn danger" id="btn-delete">✕ Delete</button>
+        <button class="cs-action-btn danger" id="btn-clearall">⊗ Clear All</button>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">
+          Animations
+          <span style="font:500 9px 'DM Mono',monospace;color:var(--text-3)">20 presets</span>
+        </div>
+        <p class="cs-hint">Select a shape, click preset. Click again to stop.</p>
+        <div class="cs-anim-grid" id="anim-grid"></div>
+        <div style="margin-top:7px;display:flex;gap:4px;">
+          <button class="cs-action-btn success" style="flex:1;margin:0" id="btn-anim-all">▶ All</button>
+          <button class="cs-action-btn danger"  style="flex:1;margin:0" id="btn-anim-stop">■ Stop</button>
+        </div>
+      </div>
+
+      <div class="cs-panel-section">
+        <div class="cs-section-title">Shortcuts</div>
+        <div class="cs-hint">
+          <span class="cs-kbd">V</span> Select &nbsp;
+          <span class="cs-kbd">H</span> Pan &nbsp;
+          <span class="cs-kbd">D</span> Pencil &nbsp;
+          <span class="cs-kbd">E</span> Eraser<br>
+          <span class="cs-kbd">A</span> Arrow &nbsp;
+          <span class="cs-kbd">X</span> Text &nbsp;
+          <span class="cs-kbd">N</span> Sticky &nbsp;
+          <span class="cs-kbd">I</span> Image<br>
+          <span class="cs-kbd">Space</span> Pan &nbsp;
+          <span class="cs-kbd">+/-</span> Zoom<br>
+          <span class="cs-kbd">⌘Z</span> Undo &nbsp;
+          <span class="cs-kbd">⌘⇧Z</span> Redo &nbsp;
+          <span class="cs-kbd">Del</span> Delete
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- Cursor overlays -->
+<div id="cursor-eraser"></div>
+<div id="cursor-pencil"></div>
+<div id="toast"></div>
+<div id="g-tooltip"></div>
+
+<script type="module">
+import { CanvasStudio } from './src/CanvasStudio.js';
+
+// Init studio
+const studio = new CanvasStudio();
+
+// ── Wire all buttons via JS (no inline onclick needed) ──────────
+const $ = id => document.getElementById(id);
+
+// Header
+$('btn-undo').onclick       = () => studio.History.undo();
+$('btn-redo').onclick       = () => studio.History.redo();
+$('btn-fit').onclick        = () => studio.PanZoom.fit();
+$('btn-reset-zoom').onclick = () => studio.PanZoom.reset();
+$('btn-export').onclick     = () => studio.Export.asPNG();
+$('btn-export-svg').onclick = () => studio.Export.asSVG();
+$('theme-toggle').onclick   = () => studio.Theme.toggle();
+$('panel-toggle').onclick   = () => $('panel').classList.toggle('collapsed');
+$('zoom-label').onclick     = () => studio.PanZoom.reset();
+$('btn-zoom-out').onclick   = () => studio.PanZoom.zoom(-0.15);
+$('btn-zoom-in').onclick    = () => studio.PanZoom.zoom(0.15);
+$('btn-fit-2').onclick      = () => studio.PanZoom.fit();
+
+// Actions
+$('btn-duplicate').onclick  = () => studio.Shapes.duplicate();
+$('btn-center').onclick     = () => studio.Shapes.alignCenter();
+$('btn-fliph').onclick      = () => studio.Shapes.flipH();
+$('btn-front').onclick      = () => studio.Shapes.toFront();
+$('btn-back').onclick       = () => studio.Shapes.toBack();
+$('btn-delete').onclick     = () => studio.Shapes.deleteSelected();
+$('btn-clearall').onclick   = () => studio.Shapes.clearAll();
+$('btn-anim-all').onclick   = () => studio.Animations.animateAll();
+$('btn-anim-stop').onclick  = () => studio.Animations.stopAll();
+
+// Property sliders
+['opacity','rotation','shadow','strokeWidth','pencilSize','fontSize'].forEach(key => {
+  const sl = $('sl-' + key);
+  if (sl) sl.oninput = () => studio.UI.onPropChange(key, sl.value);
+});
+
+// Sticky note color swatches
+const { STICKY_COLORS } = studio._svc.sticky;
+const stickyRow = $('sticky-color-row');
+STICKY_COLORS.forEach((c, i) => {
+  const sw = document.createElement('div');
+  sw.className = 'cs-sticky-swatch' + (i === 0 ? ' active' : '');
+  sw.style.background = c;
+  sw.onclick = () => {
+    document.querySelectorAll('.cs-sticky-swatch').forEach(s => s.classList.remove('active'));
+    sw.classList.add('active');
+    studio._svc.sticky._nextColor = i;
+  };
+  stickyRow.appendChild(sw);
+});
+</script>
+
+<!-- Made with ❤️ by Mehul Ligade -->
+</body>
+</html>
