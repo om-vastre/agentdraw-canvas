@@ -205,3 +205,4 @@ See [docs/EXTENDING.md](docs/EXTENDING.md) for the plugin authoring guide.
 ## 📄 License
 
 Made with ❤️ by **Mehul Ligade**
+
