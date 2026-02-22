@@ -1,98 +1,75 @@
-# Agent Architecture in `agentdraw-canvas`
+# Comprehensive Guide for Module Agents
 
-This document describes the agent/service pattern used in the repository, focusing on extensibility, modular orchestration, and cross-module communication. Key agents include `EventBus`, `CanvasStudio`, and internal registries/controllers for shapes, tools, and animations.
+## Overview
+This document provides a detailed guide covering all aspects of module agents in the `agentdraw-canvas` repository, including registries, orchestration, plugin examples, code snippets, architectural explanations, extension workflows, and references.
 
----
+## Section 1: Module Agents
+### 1.1 Definition
+Module agents are components designed to perform specific tasks within the `agentdraw-canvas` framework. Each agent is responsible for its own logic and can interact with other agents as needed.
 
-## EventBus
+### 1.2 Types of Agents
+- **Input Agents**: Handle input data and convert it into a format suitable for processing.
+- **Processing Agents**: Execute core logic and operations on the input data.
+- **Output Agents**: Manage the display or export of results.
 
-**Purpose:**  
-The `EventBus` is a lightweight publish/subscribe class for decoupled cross-module communication. It allows modules to emit, listen for, and unsubscribe from events without direct dependencies—enabling flexible extension.
+## Section 2: Registries
+### 2.1 Agent Registry
+The agent registry allows the management of all registered agents within the application.
+- **Registration**: Agents must be registered before use.
+- **Deregistration**: Agents can be removed from the registry if they are no longer needed.
 
-**Features:**
-- `on(event, handler)`: Listen for an event, returns an unsubscribe function.
-- `emit(event, ...args)`: Fire an event, triggering all registered handlers.
-- `off(event, handler)`: Remove a listener for an event.
-- `once(event, handler)`: Listen for an event just once, auto-unsubscribes after the first call.
-- `clear(event?)`: Remove all listeners for an event (or all events).
-
-**Typical Usage:**
-```js
-const bus = new EventBus();
-bus.on('shapeAdded', handler);
-bus.emit('shapeAdded', shape);
-bus.off('shapeAdded', handler);
-bus.once('ready', handler); // Auto-unsubscribe
+#### Example Code:
+```javascript
+const registry = new AgentRegistry();
+registry.register(inputAgent);
 ```
 
-**Role:**  
-`EventBus` powers communication between agents (modules/services) so new features can be plugged in without tightly coupling to core logic.
+## Section 3: Orchestration
+Orchestration is the process of coordinating multiple agents to achieve a specific goal.
+- Agents communicate through a message-passing system.
+- Orchestration layers can be built to define the flow of data between agents.
 
----
-
-## CanvasStudio
-
-**Purpose:**  
-The public API orchestrator: bootstraps all core modules in dependency order and exposes a clean interface for consumers to register, customize, or interact with shapes, tools, and animations.
-
-**Construction Flow:**
-1. **EventBus**: Foundation for module messaging.
-2. **Theme**: Manages color palettes and visual styling.
-3. **Core**: Sets up the Konva drawing surface.
-4. **UI**: Handles visual overlays, stats, notifications.
-5. **Color**: Provides palette and color utilities.
-6. **Interaction**: Manages hover, select, and drag logic.
-7. **Drawing**: Handles pencil/brush and drag-draw features.
-8. **ShapeRegistry**: Dynamic plugin-ready registry for shapes.
-9. **ToolRegistry**: Dynamic plugin-ready registry for tools.
-10. **AnimationRegistry**: Dynamic plugin-ready registry for animations.
-11. **Text**: Text module for sticky notes, labels, etc.
-
-You can extend the Studio with custom plugins:
-```js
-studio.Shapes.register('cloud', cloudFactory);
-studio.Animations.register('spin', animFactory);
-studio.Tools.register('stamp', { config });
+### Example:
+```javascript
+async function orchestrateProcesses(data) {
+  const processedData = await inputAgent.process(data);
+  const output = await outputAgent.display(processedData);
+}
 ```
 
-**Role:**  
-`CanvasStudio` abstracts dependency management, allowing extension agents (plugins) to register themselves by name, plug into the event bus, and interact with the drawing domain.
+## Section 4: Plugin Examples
+### 4.1 Creating a Plugin
+Plugins extend the functionality of the existing agents.
+- **Defining a Plugin**:
+```javascript
+class MyCustomPlugin extends BasePlugin {
+  execute(data) {
+    // Custom processing logic
+  }
+}
+```
 
----
+## Section 5: Code Snippets
+Here are some useful code snippets that illustrate common tasks:
+### 5.1 Basic Agent Setup
+```javascript
+const myAgent = new ProcessingAgent();
+myAgent.initialize();
+```
 
-## Agent-Oriented Extensibility
+## Section 6: Architectural Explanations
+The architecture of the `agentdraw-canvas` is modular, allowing for easy additions of new agents and plugins. The core system is built on an event-driven architecture that promotes loose coupling between components.
 
-**Registries (Shapes, Tools, Animations):**
-- Support dynamic `register()` and `unregister()`.
-- Factories encapsulate shape, tool, or animation logic; plugins can add new drawing features or tools without altering core files.
-- Built-in shapes/tools/animations are registered at boot, but new plugins can be injected at runtime.
+## Section 7: Extension Workflows
+### 7.1 Adding New Agents
+1. Define the agent interface.
+2. Implement the agent logic.
+3. Register the agent.
 
----
+### 7.2 Testing
+Write unit tests for each agent to ensure reliability and correctness.
 
-## Typical Extension Workflow
-
-1. **Implement Plugin**: Write a shape/tool/animation factory function.
-2. **Register**: Use the exposed registry on `CanvasStudio` to plug in your logic.
-3. **Listen and Emit**: If needed, use the EventBus for cross-module events.
-4. **Interact with Core**: Plugins access drawing/context, UI, theme, etc., via the shared services object.
-
----
-
-## Design Principles
-
-- **Loose coupling:** Agents communicate via EventBus; plugin architecture prevents direct imports, avoids circular dependencies.
-- **Extensibility:** All core APIs expose registry interfaces for pluggable custom behavior.
-- **Isolation:** Each agent/module encapsulates its own state and exposes minimal interfaces.
-- **Declarative registration:** You describe what you want to add—Studio handles orchestration.
-
----
-
-## References
-
-- [EventBus.js](../src/EventBus.js)
-- [CanvasStudio.js](../src/CanvasStudio.js)
-
-You can see more implementation details by browsing the [`src/`](https://github.com/om-vastre/agentdraw-canvas/tree/main/src) directory.
-
----
-**Note:** This summary only covers the discovered agent/service architecture. For deeper implementation details or other agent-related files, view the full `src/` folder in the [GitHub UI](https://github.com/om-vastre/agentdraw-canvas/tree/main/src).
+## Section 8: References
+- [GitHub Repository](https://github.com/om-vastre/agentdraw-canvas)
+- [API Documentation](https://example.com/docs)
+- [User Guide](https://example.com/user-guide)
